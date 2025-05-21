@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Тест: Происхождение и развитие жизни на Земле</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .question {
+            margin: 25px 0;
+            padding: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .answers {
+            margin-left: 20px;
+        }
+        .answer-option {
+            margin: 8px 0;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #results {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f5f5f5;
+        }
+        .correct {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: #c62828;
+            font-weight: bold;
+        }
+        .score {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Тест: Происхождение и развитие жизни на Земле</h1>
+    <div id="test"></div>
+    <button onclick="checkTest()">Проверить результаты</button>
+    <div id="results"></div>
+
+    <script>
+        const questions = [
+            {
+                type: 'single',
+                text: 'Назовите предмет изучения общей биологии:',
+                answers: [
+                    'строение и функции организма',
+                    'природные явления',
+                    'закономерности развития и функционирования живых систем',
+                    'строение и функции растений и животных'
+                ],
+                correct: [2],
+                explanation: 'Общая биология изучает наиболее общие закономерности, характерные для всех живых организмов.'
+            },
+            {
+                type: 'single',
+                text: 'На каком минимальном уровне организации жизни проявляется такое свойство организмов, как способность к обмену веществ, энергии, информации?',
+                answers: [
+                    'биосферном',
+                    'молекулярном',
+                    'организменном',
+                    'клеточном'
+                ],
+                correct: [3],
+                explanation: 'Клетка - минимальная единица жизни, где проявляются все свойства живого.'
+            },
+            {
+                type: 'single',
+                text: 'Назовите высший уровень организации жизни:',
+                answers: [
+                    'биосферный',
+                    'биогеоценотический',
+                    'видовой',
+                    'организменный'
+                ],
+                correct: [0],
+                explanation: 'Биосфера - глобальная экосистема, высший уровень организации жизни на Земле.'
+            },
+            {
+                type: 'single',
+                text: 'Все живые организмы:',
+                answers: [
+                    'обладают одинаково сложным уровнем организации',
+                    'обладают высоким уровнем обмена веществ',
+                    'одинаково реагируют на окружающую среду',
+                    'обладают одинаковым механизмом передачи наследственной информации'
+                ],
+                correct: [3],
+                explanation: 'Все живые организмы используют ДНК/РНК для хранения и передачи генетической информации.'
+            },
+            {
+                type: 'single',
+                text: 'Окончательно опроверг теорию самозарождения организмов:',
+                answers: ['Линней', 'Ламарк', 'Дарвин', 'Пастер'],
+                correct: [3],
+                explanation: 'Луи Пастер в 1862 году экспериментально доказал невозможность самозарождения микроорганизмов.'
+            },
+            {
+                type: 'single',
+                text: 'Гипотезу абиогенного синтеза органических веществ сформулировал:',
+                answers: ['Л. Пастер', 'В.И. Вернадский', 'А.И. Опарин', 'Ч. Дарвин'],
+                correct: [2],
+                explanation: 'А.И. Опарин в 1924 году предложил теорию возникновения жизни через абиогенный синтез органических соединений.'
+            }
+        ];
+
+        // Генерация теста
+        let testHTML = '';
+        questions.forEach((q, index) => {
+            testHTML += `<div class="question" id="q${index}">
+                <h3>${index+1}. ${q.text}</h3>
+                <div class="answers">`;
+            
+            q.answers.forEach((a, i) => {
+                testHTML += `<div class="answer-option">
+                    <input type="${q.type === 'single' ? 'radio' : 'checkbox'}" 
+                           name="q${index}" 
+                           value="${i}"
+                           id="q${index}a${i}">
+                    <label for="q${index}a${i}">${a}</label>
+                </div>`;
+            });
+            
+            testHTML += '</div></div>';
+        });
+
+        document.getElementById('test').innerHTML = testHTML;
+
+        // Проверка результатов
+        function checkTest() {
+            let correctCount = 0;
+            const results = [];
+
+            questions.forEach((q, index) => {
+                const selected = [];
+                const inputs = document.querySelectorAll(`input[name="q${index}"]:checked`);
+                inputs.forEach(input => selected.push(parseInt(input.value)));
+                
+                const isCorrect = arraysEqual(selected.sort(), q.correct.sort());
+                if(isCorrect) correctCount++;
+                
+                results.push({
+                    question: q.text,
+                    correct: isCorrect,
+                    correctAnswers: q.correct,
+                    selected: selected,
+                    explanation: q.explanation
+                });
+            });
+
+            const percent = (correctCount / questions.length * 100).toFixed(1);
+            let grade = '';
+            if(percent >= 91) grade = '5 (Отлично)';
+            else if(percent >= 70) grade = '4 (Хорошо)';
+            else if(percent >= 50) grade = '3 (Удовлетворительно)';
+            else grade = '2 (Неудовлетворительно)';
+
+            let resultsHTML = `
+                <div class="score">Ваш результат: ${percent}% (${grade})</div>
+                <h3>Подробные результаты:</h3>
+            `;
+            
+            results.forEach((r, i) => {
+                const correctAnswerText = r.correctAnswers.map(ca => questions[i].answers[ca]).join(', ');
+                const selectedAnswerText = r.selected.length > 0 
+                    ? r.selected.map(s => questions[i].answers[s]).join(', ')
+                    : 'Нет ответа';
+                
+                resultsHTML += `
+                <div class="${r.correct ? 'correct' : 'incorrect'}">
+                    <h4>${i+1}. ${r.question}</h4>
+                    <p><strong>Ваш ответ:</strong> ${selectedAnswerText}</p>
+                    <p><strong>Правильный ответ:</strong> ${correctAnswerText}</p>
+                    <p><em>${r.explanation}</em></p>
+                </div>`;
+            });
+
+            document.getElementById('results').innerHTML = resultsHTML;
+            document.getElementById('results').style.display = 'block';
+            
+            // Прокрутка к результатам
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function arraysEqual(a, b) {
+            return JSON.stringify(a) === JSON.stringify(b);
+        }
+    </script>
+</body>
+</html>
